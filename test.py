@@ -1,7 +1,7 @@
 from io import StringIO
 import unittest
 from unittest.mock import patch
-from meetTheFamily import FamilyTree
+from meetTheFamily.app import FamilyTree
 
 @patch('sys.stdout', new_callable=StringIO)
 class TestFamilyTree(unittest.TestCase):

@@ -1,113 +1,6 @@
-FEMALE = 'female'
-MALE = 'male'
-
-
-class FamilyMember:
-    def __init__(self, name, gender):
-        self.name = name
-        self.gender = gender
-
-
-class FamilyNode:
-    def __init__(self, primary_member, parent_node=None):
-        self.primary_member = primary_member
-        self.secondary_member = None
-        self._parent_node = parent_node
-        self.child_nodes = []
-
-    def set_secondary_member(self, family_member):
-        self.secondary_member = family_member
-
-    def add_child(self, family_node):
-        self.child_nodes.append(family_node)
-
-    def get_member(self, member_name):
-        if self.primary_member.name == member_name:
-            return self.primary_member
-
-        elif self.secondary_member and self.secondary_member.name == member_name:
-            return self.secondary_member
-
-    def has_couple(self):
-        return self.primary_member and self.secondary_member
-    
-    def get_sibling_nodes(self, member_gender, sibling_gender=None):
-        sibling_nodes = []
-        
-        if self.is_primary_member(member_gender):
-            if sibling_gender:
-                sibling_nodes = filter(
-                    lambda node: node != self
-                    and node.primary_member.gender == sibling_gender,
-                    self._parent_node.child_nodes
-                )
-
-            else:
-                sibling_nodes = filter(lambda node: node != self, self._parent_node.child_nodes)
-
-        return sibling_nodes
-
-    def get_parent_siblings(self, member_name, parent_gender, parent_sibling_gender=None):
-        parent_sibling_nodes = []
-        
-        member_gender = self.get_member(member_name).gender
-        if self.is_primary_member(member_gender):
-            parent_node = self._parent_node
-
-            # Check if parent is primary member
-            if parent_node.is_primary_member(parent_gender):
-                if parent_sibling_gender:
-                    parent_sibling_nodes = filter(
-                        lambda node: node != self
-                        and node.primary_member.gender == parent_sibling_gender,
-                        parent_node.get_sibling_nodes(parent_gender, parent_sibling_gender)
-                    )
-
-                else:
-                    parent_sibling_nodes = filter(
-                        lambda node: node != self, parent_node.get_sibling_nodes(parent_gender)
-                    )
-
-        return map(lambda node: node.primary_member, parent_sibling_nodes)
-
-    def get_spouse_siblings(self, member_gender, spouse_sibling_gender=None):
-        spouse_sibling_nodes = []
-
-        # Check if given member is not primary member
-        if not self.is_primary_member(member_gender):
-            spouse_gender = self.primary_member.gender
-            if spouse_sibling_gender:
-                spouse_sibling_nodes = filter(
-                    lambda node: node != self
-                    and node.primary_member.gender == spouse_sibling_gender,
-                    self.get_sibling_nodes(spouse_gender, spouse_sibling_gender)
-                )
-
-            else:
-                spouse_sibling_nodes = filter(lambda node: node != self, self.get_sibling_nodes(spouse_gender))
-
-        return map(lambda node: node.primary_member, spouse_sibling_nodes)
-
-    def get_sibling_spouses(self, member_gender, sibling_spouse_gender):
-        sibling_spouse_nodes = []
-
-        # Check if given member is primary member
-        if self.is_primary_member(member_gender):
-            sibling_spouse_nodes = filter(
-                lambda node: node.secondary_member
-                and node.secondary_member.gender == sibling_spouse_gender,
-                self.get_sibling_nodes(self.primary_member.gender)
-            )
-
-        return map(lambda node: node.secondary_member, sibling_spouse_nodes)
-
-    def is_primary_member(self, member_gender):
-        return member_gender == self.primary_member.gender
-
-    def get_children_by_gender(self, children_gender):
-        filtered_child_nodes = filter(lambda node: node.primary_member.gender == children_gender, self.child_nodes)
-
-        return map(lambda node: node.primary_member, filtered_child_nodes)
+from meetTheFamily.constants import MALE, FEMALE
+from meetTheFamily.FamilyMember import FamilyMember
+from meetTheFamily.FamilyNode import FamilyNode
 
 
 class FamilyTree:
@@ -142,10 +35,10 @@ class FamilyTree:
         DAUGHTER,
         SIBLINGS
     ]
-    
+
     def __init__(self):
         self._tree_index = {}
-        self._initialize_tree()   
+        self._initialize_tree()
 
     def _add_member_to_family_tree(self, new_member, parent_node, existing_family_node=None):
         if existing_family_node:
@@ -155,18 +48,18 @@ class FamilyTree:
             new_family_node = FamilyNode(new_member, parent_node)
             self._tree_index[new_member.name] = new_family_node
             return new_family_node
-        
+
     def add_child_member_to_family_tree(self, new_member, potential_mother_name, suppress_output=False):
         if potential_mother_name not in self._tree_index:
             print('PERSON_NOT_FOUND')
             return
-        
+
         selected_node = self._tree_index[potential_mother_name]
         if not selected_node.has_couple() or selected_node.get_member(potential_mother_name).gender != FEMALE:
             if not suppress_output:
                 print('CHILD_ADDITION_FAILED')
             return
-        
+
         new_child_node = self._add_member_to_family_tree(new_member, selected_node, [])
         selected_node.add_child(new_child_node)
         if not suppress_output:
@@ -181,7 +74,7 @@ class FamilyTree:
         if member_name not in self._tree_index:
             print('PERSON_NOT_FOUND')
             return
-        
+
         selected_node = self._tree_index[member_name]
         people = []
 
@@ -225,6 +118,7 @@ class FamilyTree:
 
     def print_output(self, people):
         people_list = list(people)
+        
         if people_list:
             print(' '.join(f'{person.name}' for person in people_list))
         else:
@@ -250,7 +144,7 @@ class FamilyTree:
         elif command_in_uppercase == FamilyTree.ADD_CHILD:
             mother_name, name, gender = params
             new_member = FamilyMember(name, gender.lower())
-            self.add_child_member_to_family_tree(new_member, mother_name)         
+            self.add_child_member_to_family_tree(new_member, mother_name)
 
     def _initialize_tree(self):
         self.initial_operations = [
@@ -308,17 +202,3 @@ class FamilyTree:
                 new_member = FamilyMember(name, gender)
                 self.add_child_member_to_family_tree(new_member, mother_name, True)
 
-
-def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(description='Family tree')
-    parser.add_argument('input_file', type=argparse.FileType(), help='Input file path')
-    args = parser.parse_args()
-
-    family_tree = FamilyTree()
-    family_tree.process_file(args.input_file)
-
-
-if __name__ == '__main__':
-    main()
