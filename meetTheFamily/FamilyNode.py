@@ -24,54 +24,55 @@ class FamilyNode:
     def get_sibling_nodes(self, member_gender, sibling_gender=None):
         sibling_nodes = []
 
-        if self.is_primary_member(member_gender):
-            if sibling_gender:
-                sibling_nodes = filter(
-                    lambda node: node != self and node.primary_member.gender == sibling_gender,
-                    self._parent_node.child_nodes
-                )
+        if self.is_primary_member(member_gender) and sibling_gender:
+            sibling_nodes = filter(
+                lambda node: node != self and node.primary_member.gender == sibling_gender,
+                self._parent_node.child_nodes
+            )
 
-            else:
-                sibling_nodes = filter(lambda node: node != self, self._parent_node.child_nodes)
+        elif self.is_primary_member(member_gender) and not sibling_gender:
+            sibling_nodes = filter(lambda node: node != self, self._parent_node.child_nodes)
 
         return sibling_nodes
 
     def get_parent_siblings(self, member_name, parent_gender, parent_sibling_gender=None):
-        parent_sibling_nodes = []
-
         member_gender = self.get_member(member_name).gender
-        if self.is_primary_member(member_gender):
-            parent_node = self._parent_node
+        if not self.is_primary_member(member_gender):
+            return []
 
-            # Check if parent is primary member
-            if parent_node.is_primary_member(parent_gender):
-                if parent_sibling_gender:
-                    parent_sibling_nodes = filter(
-                        lambda node: node != self and node.primary_member.gender == parent_sibling_gender,
-                        parent_node.get_sibling_nodes(parent_gender, parent_sibling_gender)
-                    )
+        parent_sibling_nodes = []
+        parent_node = self._parent_node
 
-                else:
-                    parent_sibling_nodes = filter(
-                        lambda node: node != self, parent_node.get_sibling_nodes(parent_gender)
-                    )
+        # Check if parent is primary member
+        if parent_node.is_primary_member(parent_gender) and parent_sibling_gender:
+            parent_sibling_nodes = filter(
+                lambda node: node != self and node.primary_member.gender == parent_sibling_gender,
+                parent_node.get_sibling_nodes(parent_gender, parent_sibling_gender)
+            )
+
+        elif parent_node.is_primary_member(parent_gender) and not parent_sibling_gender:
+            parent_sibling_nodes = filter(
+                lambda node: node != self, parent_node.get_sibling_nodes(parent_gender)
+            )
 
         return map(lambda node: node.primary_member, parent_sibling_nodes)
 
     def get_spouse_siblings(self, member_gender, spouse_sibling_gender=None):
-        spouse_sibling_nodes = []
-
         # Check if given member is not primary member
-        if not self.is_primary_member(member_gender):
-            spouse_gender = self.primary_member.gender
-            if spouse_sibling_gender:
-                spouse_sibling_nodes = filter(
-                    lambda node: node != self and node.primary_member.gender == spouse_sibling_gender,
-                    self.get_sibling_nodes(spouse_gender, spouse_sibling_gender)
-                )
+        if self.is_primary_member(member_gender):
+            return []
 
-            else:
-                spouse_sibling_nodes = filter(lambda node: node != self, self.get_sibling_nodes(spouse_gender))
+        spouse_sibling_nodes = []
+        spouse_gender = self.primary_member.gender
+
+        if spouse_sibling_gender:
+            spouse_sibling_nodes = filter(
+                lambda node: node != self and node.primary_member.gender == spouse_sibling_gender,
+                self.get_sibling_nodes(spouse_gender, spouse_sibling_gender)
+            )
+
+        else:
+            spouse_sibling_nodes = filter(lambda node: node != self, self.get_sibling_nodes(spouse_gender))
 
         return map(lambda node: node.primary_member, spouse_sibling_nodes)
 

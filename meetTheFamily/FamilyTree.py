@@ -9,7 +9,7 @@ class FamilyTree:
 
     supported_public_commands = [
         ADD_CHILD,
-        GET_RELATIONSHIP
+        GET_RELATIONSHIP,
     ]
 
     ADD_MEMBER = 'ADD_MEMBER'
@@ -33,7 +33,7 @@ class FamilyTree:
         BROTHER_IN_LAW,
         SON,
         DAUGHTER,
-        SIBLINGS
+        SIBLINGS,
     ]
 
     def __init__(self):
@@ -60,7 +60,7 @@ class FamilyTree:
                 print('CHILD_ADDITION_FAILED')
             return
 
-        new_child_node = self._add_member_to_family_tree(new_member, selected_node, [])
+        new_child_node = self._add_member_to_family_tree(new_member, selected_node)
         selected_node.add_child(new_child_node)
         if not suppress_output:
             print('CHILD_ADDITION_SUCCEEDED')
@@ -118,7 +118,7 @@ class FamilyTree:
 
     def print_output(self, people):
         people_list = list(people)
-        
+
         if people_list:
             print(' '.join(f'{person.name}' for person in people_list))
         else:
@@ -178,24 +178,23 @@ class FamilyTree:
             f'ADD_CHILD Jnki Lavnya {FEMALE}',
             f'ADD_CHILD Satvy Vasa {MALE}',
             f'ADD_CHILD Krpi Kriya {MALE}',
-            f'ADD_CHILD Krpi Krithi {FEMALE}'
+            f'ADD_CHILD Krpi Krithi {FEMALE}',
         ]
 
         for operation in self.initial_operations:
             command, *params = operation.split(' ')
             command_in_uppercase = command.upper()
 
-            if command_in_uppercase == FamilyTree.ADD_MEMBER:
-                if len(params) == 2:
-                    name, gender = params
-                    new_member = FamilyMember(name, gender)
-                    self._add_member_to_family_tree(new_member, None)
+            if command_in_uppercase == FamilyTree.ADD_MEMBER and len(params) == 2:
+                name, gender = params
+                new_member = FamilyMember(name, gender)
+                self._add_member_to_family_tree(new_member, None)
 
-                elif len(params) == 3:
-                    spouse_of, name, gender = params
-                    new_member = FamilyMember(name, gender)
-                    spouse_node = self._tree_index[spouse_of]
-                    self._add_member_to_family_tree(new_member, None, spouse_node)
+            elif command_in_uppercase == FamilyTree.ADD_MEMBER and len(params) == 3:
+                spouse_of, name, gender = params
+                new_member = FamilyMember(name, gender)
+                spouse_node = self._tree_index[spouse_of]
+                self._add_member_to_family_tree(new_member, None, spouse_node)
 
             elif command_in_uppercase == FamilyTree.ADD_CHILD:
                 mother_name, name, gender = params
