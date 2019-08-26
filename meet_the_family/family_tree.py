@@ -1,6 +1,6 @@
-from meetTheFamily.constants import MALE, FEMALE
-from meetTheFamily.FamilyMember import FamilyMember
-from meetTheFamily.FamilyNode import FamilyNode
+from meet_the_family.constants import MALE, FEMALE
+from meet_the_family.family_member import FamilyMember
+from meet_the_family.family_node import FamilyNode
 
 
 class FamilyTree:
@@ -181,4 +181,3 @@ class FamilyTree:
                 mother_name, name, gender = params
                 new_member = FamilyMember(name, gender)
                 self.add_child_member_to_family_tree(new_member, mother_name, True)
-

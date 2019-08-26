@@ -1,4 +1,4 @@
-from meetTheFamily.FamilyTree import FamilyTree
+from meet_the_family.family_tree import FamilyTree
 
 
 def main():

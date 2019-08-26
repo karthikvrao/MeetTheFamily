@@ -1,12 +1,13 @@
 # The Shan Family Tree
 
 ## About
-This is a Python3 program that enables the user to interact with Kind Shan's family tree. When run from the command-line it expects a text file as an argument.
+This is a Python3 program that enables the user to interact with King Shan's family tree. When run from the 
+command-line it expects a text file as an argument.
 
 ### How to run
-The program acn be run from command-line like so:
+After `cd`ing into the root directory, the program can be run from command-line like so:
 ```
-python3 meetTheFamily.py test_input_file.txt
+python3 -m meet_the_family test_input_file.txt
 ```
 
 The text file may contain all the operations that the user desires to perform on the family tree line-by-line. 
@@ -48,7 +49,7 @@ Following relationships are supported
 * Daughter
 * Siblings
 
-### Expected outputs
+### Expected outputs per line
 * When results are found: `Names seperated by spaces`
 * When no results found: `NONE`
 * When member name is not found: `PERSON_NOT_FOUND`
