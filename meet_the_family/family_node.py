@@ -44,16 +44,8 @@ class FamilyNode:
         parent_node = self._parent_node
 
         # Check if parent is primary member
-        if parent_node.is_primary_member(parent_gender) and parent_sibling_gender:
-            parent_sibling_nodes = filter(
-                lambda node: node != self and node.primary_member.gender == parent_sibling_gender,
-                parent_node.get_sibling_nodes(parent_gender, parent_sibling_gender)
-            )
-
-        elif parent_node.is_primary_member(parent_gender) and not parent_sibling_gender:
-            parent_sibling_nodes = filter(
-                lambda node: node != self, parent_node.get_sibling_nodes(parent_gender)
-            )
+        if parent_node.is_primary_member(parent_gender):
+            parent_sibling_nodes = parent_node.get_sibling_nodes(parent_gender, parent_sibling_gender)
 
         return map(lambda node: node.primary_member, parent_sibling_nodes)
 
@@ -62,29 +54,25 @@ class FamilyNode:
         if self.is_primary_member(member_gender):
             return []
 
-        spouse_sibling_nodes = []
         spouse_gender = self.primary_member.gender
-
-        if spouse_sibling_gender:
-            spouse_sibling_nodes = filter(
-                lambda node: node != self and node.primary_member.gender == spouse_sibling_gender,
-                self.get_sibling_nodes(spouse_gender, spouse_sibling_gender)
-            )
-
-        else:
-            spouse_sibling_nodes = filter(lambda node: node != self, self.get_sibling_nodes(spouse_gender))
+        spouse_sibling_nodes = self.get_sibling_nodes(spouse_gender, spouse_sibling_gender)
 
         return map(lambda node: node.primary_member, spouse_sibling_nodes)
 
-    def get_sibling_spouses(self, member_gender, sibling_spouse_gender):
+    def get_sibling_spouses(self, member_gender, sibling_spouse_gender=None):
         sibling_spouse_nodes = []
 
         # Check if given member is primary member
         if self.is_primary_member(member_gender):
             sibling_spouse_nodes = filter(
-                lambda node: node.secondary_member and node.secondary_member.gender == sibling_spouse_gender,
-                self.get_sibling_nodes(self.primary_member.gender)
+                lambda node: node.secondary_member, self.get_sibling_nodes(self.primary_member.gender)
             )
+
+            if sibling_spouse_gender:
+                sibling_spouse_nodes = filter(
+                    lambda node: node.secondary_member.gender == sibling_spouse_gender,
+                    sibling_spouse_nodes
+                )
 
         return map(lambda node: node.secondary_member, sibling_spouse_nodes)
 

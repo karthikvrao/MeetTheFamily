@@ -1,1 +1,4 @@
 GET_RELATIONSHIP Atya Sister-In-Law
+GET_RELATIONSHIP Vasa Paternal-Aunt
+GET_RELATIONSHIP Asva Maternal-Uncle
+GET_RELATIONSHIP Chit Siblings

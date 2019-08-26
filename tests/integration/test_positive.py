@@ -41,6 +41,10 @@ class TestPositive(unittest.TestCase):
         self.family_tree.perform_operation('GET_RELATIONSHIP Jaya Sister-In-Law')
         self.assertEqual(mock_stdout.getvalue(), 'Tritha\n')
 
+    def test_get_son(self, mock_stdout):
+        self.family_tree.perform_operation('GET_RELATIONSHIP Vyan Son')
+        self.assertEqual(mock_stdout.getvalue(), 'Asva Vyas\n')
+
     def test_get_daughter(self, mock_stdout):
         self.family_tree.perform_operation('GET_RELATIONSHIP Lika Daughter')
         self.assertEqual(mock_stdout.getvalue(), 'Vila Chika\n')
